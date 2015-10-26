@@ -1,0 +1,6 @@
+/generic-archiver/target/
+/tar-archiver/target/
+/hdfs-archiver/target/
+/pyramidio/target/
+/pyramidio-cli/target/
+/target/
