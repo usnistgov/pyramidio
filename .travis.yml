@@ -1,2 +1,8 @@
 language: java
 
+notifications:
+  email:
+    recipients:
+      - antoine.vandecreme@nist.gov
+    on_success: change
+    on_failure: always
