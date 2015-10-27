@@ -57,7 +57,7 @@ To read a DZI pyramid, one should use the `DeepZoomImageReader` class:
 ```java
 try (DeepZoomImageReader reader = new DeepZoomImageReader("my-image.dzi")) {
     BufferedImage wholeImageZoom0_01 = reader.getWholeImage(0.01);
-    BufferedImage regionAtZoom 0_1 = reader.getSubImage(
+    BufferedImage regionAtZoom0_1 = reader.getSubImage(
         new Rectangle(x, y, width, height), 0.1);
     ...
 }
