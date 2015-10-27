@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 /**
  *
  * @author Antoine Vandecreme (Initial implementation)
- * @author Julien Amelot (Added multi-thread)
+ * @author Julien Amelot (Added multi-process)
  */
 public class DirectoryArchiver implements FilesArchiver {
 
@@ -33,7 +33,8 @@ public class DirectoryArchiver implements FilesArchiver {
     public DirectoryArchiver(File directory) throws IOException {
         if (directory.exists()) {
             if (!directory.isDirectory()) {
-                throw new IOException("The path '" + directory + "' is not a directory.");
+                throw new IOException("The path '" + directory
+                        + "' is not a directory.");
             }
         } else {
             //attempts to create it
@@ -56,21 +57,25 @@ public class DirectoryArchiver implements FilesArchiver {
 
                     if (attempts > 10) {
                         //we give up on trying
-                        throw new IOException("Cannot create directory '" + directory + "'");
+                        throw new IOException("Cannot create directory '"
+                                + directory + "'");
                     } else {
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException ex) {
-                            logger.log(Level.SEVERE, null, ex);
+                            throw new IOException("Interrupted while waiting to"
+                                    + " create directory " + directory, ex);
                         }
                     }
 
                 }
             }
             if (attempts == 0) {
-                logger.log(Level.INFO, "Directory was created (but not by this thread)");
+                logger.log(Level.FINEST,
+                        "Directory was created (but not by this thread)");
             } else {
-                logger.log(Level.INFO, "Directory was created after {0} attempts", attempts);
+                logger.log(Level.FINEST,
+                        "Directory was created after {0} attempts", attempts);
             }
 
         }
@@ -88,7 +93,8 @@ public class DirectoryArchiver implements FilesArchiver {
                 if (!parent.exists()) {
                     throw new IOException("Cannot create directory " + parent);
                 } else {
-                    logger.log(Level.INFO, "Directory was created (but not by us)");
+                    logger.log(Level.FINEST,
+                            "Directory was created (but not by us)");
                 }
             }
         }

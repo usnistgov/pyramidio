@@ -17,14 +17,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 
 /**
  *
- * @author antoinev
+ * @author Antoine Vandecreme
  */
 public class TarArchiver implements FilesArchiver {
 
@@ -45,9 +44,11 @@ public class TarArchiver implements FilesArchiver {
         T result = appender.append(baos);
         TarArchiveEntry entry = new TarArchiveEntry(path);
         entry.setSize(baos.size());
-        tarOutput.putArchiveEntry(entry);
-        tarOutput.write(baos.toByteArray());
-        tarOutput.closeArchiveEntry();
+        synchronized (this) {
+            tarOutput.putArchiveEntry(entry);
+            tarOutput.write(baos.toByteArray());
+            tarOutput.closeArchiveEntry();
+        }
         return result;
     }
 
@@ -70,15 +71,17 @@ public class TarArchiver implements FilesArchiver {
     @Override
     public void appendFile(String path, File file) throws IOException {
         TarArchiveEntry entry = new TarArchiveEntry(file, path);
-        tarOutput.putArchiveEntry(entry);
-        try (FileInputStream fis = new FileInputStream(file)) {
-            IOUtils.copy(fis, tarOutput);
+        synchronized (this) {
+            tarOutput.putArchiveEntry(entry);
+            try (FileInputStream fis = new FileInputStream(file)) {
+                IOUtils.copy(fis, tarOutput);
+            }
+            tarOutput.closeArchiveEntry();
         }
-        tarOutput.closeArchiveEntry();
     }
 
     @Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
         tarOutput.close();
     }
 }
