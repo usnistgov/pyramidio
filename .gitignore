@@ -3,4 +3,5 @@
 /hdfs-archiver/target/
 /pyramidio/target/
 /pyramidio-cli/target/
-/target/
+.directory
+**/nbactions.xml
