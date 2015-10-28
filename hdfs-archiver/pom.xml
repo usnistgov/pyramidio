@@ -4,7 +4,7 @@
     <parent>
         <groupId>gov.nist.isg</groupId>
         <artifactId>pyramidio-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Library to read and write archives on HDFS.</description>
