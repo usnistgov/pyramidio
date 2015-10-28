@@ -7,7 +7,7 @@ deploy:
   api_key:
     secure: rGgUJreMqn4cEw/1g3KUnoaG4Ce5vPRf3z94NyjmZUmSeU3bmA6ZgqHxkqxb6Vh3ZwA8vJB9pkJ/Ba43x6xI/ullb5Fpnri+YIniwLQJ9D5xVaqXPalt4mOuu8oopps8vjAMEOlbYo8lHPlw2VqH4/OzmJZn6TqpzFC0l+ceg0SYN2f6XshBnuUU4k+Wzc3t6fN9NzQ0+yBu0eqNTPvt9h0eDWvMtO0S8Hp2QM3ZpM/hyCfksJm9U1BpLB8xcwnMRndP69WlsWZig19n9XvrPZYygcz0I69aYfTH689Ub35M6gozz9UsfYRSuH6FasdYL4HTKo3K9MWsNe0JO+gXdB09qn0hEiugVXOuxV6OE2DeSbUk11rRqL0dZpKp2n0P/lFdY+8bledF3kFpPDF7gnwRlg9sSNRRv6xAcJJZoaYgia52OX+jCbNcj6vcZba6h3hjbO7Rl+B1o9zxqxcyBwjYsAyNTw8eZ5jaoWS+YUBtsmXkf3mLbxJXO2SM2v+d5PLDYYrDYGJLKGFbvnl0+dzq7vZA+xg83BvgFvmDNOy23P6S+we0PeXknxnTw6ESyvo602SHvRuFIMkNZv24gy3CJ5AN8RQue7Ih8y2eRhHVRKtl87QBlvCY2NhFMUKnztcZ+3u63hJlYubvvPu9+qBqOhZYkWhzwljVEW+1y1U=
   file: 
-    -"${PYRAMIDIO_CLI}"
+    - "${PYRAMIDIO_CLI}"
   skip_cleanup: true
   on:
     repo: NIST-ISG/pyramidio
