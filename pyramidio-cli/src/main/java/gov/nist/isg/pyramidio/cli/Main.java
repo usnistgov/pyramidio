@@ -70,7 +70,7 @@ public class Main {
                 "If specified, the pyramid is generated in a tar file.");
         options.addOption(tarOption);
 
-        Option helpOption = new Option("h", "help", true,
+        Option helpOption = new Option("h", "help", false,
                 "Display this help message and exit.");
         options.addOption(helpOption);
 
