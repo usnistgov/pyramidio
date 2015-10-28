@@ -10,3 +10,4 @@ deploy:
     -"${PYRAMIDIO_CLI}"
   on:
     repo: NIST-ISG/pyramidio
+    tags: true
