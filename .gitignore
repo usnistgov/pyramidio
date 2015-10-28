@@ -5,3 +5,5 @@
 /pyramidio-cli/target/
 .directory
 **/nbactions.xml
+**/pom.xml.releaseBackup
+release.properties
