@@ -56,12 +56,10 @@ As for the `PartialImageReader`s:
 To read a DZI pyramid, one should use the `DeepZoomImageReader` class:
 ```java
 File dziFile = new File("my-image.dzi");
-try (DeepZoomImageReader reader = new DeepZoomImageReader(dziFile)) {
-    BufferedImage wholeImageZoom0_01 = reader.getWholeImage(0.01);
-    BufferedImage regionAtZoom0_1 = reader.getSubImage(
-        new Rectangle(x, y, width, height), 0.1);
-    ...
-}
+DeepZoomImageReader reader = new DeepZoomImageReader(dziFile);
+BufferedImage wholeImageZoom0_01 = reader.getWholeImage(0.01);
+BufferedImage regionAtZoom0_1 = reader.getSubImage(
+    new Rectangle(x, y, width, height), 0.1);
 ```
 
 ## Disclaimer:
