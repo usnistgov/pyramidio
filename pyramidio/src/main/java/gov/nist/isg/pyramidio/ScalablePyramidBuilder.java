@@ -11,9 +11,9 @@
  */
 package gov.nist.isg.pyramidio;
 
-import gov.nist.isg.pyramidio.tools.ImageResizingHelper;
-import gov.nist.isg.pyramidio.tools.BufferedImageHelper;
 import gov.nist.isg.archiver.FilesArchiver;
+import gov.nist.isg.pyramidio.tools.BufferedImageHelper;
+import gov.nist.isg.pyramidio.tools.ImageResizingHelper;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -151,7 +151,7 @@ public class ScalablePyramidBuilder {
                     return null;
                 }
 
-                // The tile we are currently computing is a downsampling of 
+                // The tile we are currently computing is a downsampling of
                 // 4 tiles at level + 1 (except in the corners)
                 BufferedImage topLeft = buildTile(
                         level + 1, tileRow * 2, tileColumn * 2);
@@ -237,7 +237,7 @@ public class ScalablePyramidBuilder {
                         return null;
                     }
 
-                    // The tile we are currently computing is a downsampling of 
+                    // The tile we are currently computing is a downsampling of
                     // 4 tiles at level + 1 (except in the corners)
                     TileBuilderTask topLeftTask = new TileBuilderTask(
                             level + 1, tileRow * 2, tileColumn * 2);

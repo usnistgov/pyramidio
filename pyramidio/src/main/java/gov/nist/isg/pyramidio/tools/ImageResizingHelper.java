@@ -99,8 +99,8 @@ public class ImageResizingHelper {
 
         int width = img.getWidth();
         int height = img.getHeight();
-        int srcCenterX = width / 2;
-        int srcCenterY = height / 2;
+        double srcCenterX = width / 2.0;
+        double srcCenterY = height / 2.0;
         double xScale = dstWidth / (double) width;
         double yScale = dstHeight / (double) height;
         double dstCenterX = (dstWidth + xScale) / 2;
@@ -131,8 +131,8 @@ public class ImageResizingHelper {
 
         int width = img.getWidth();
         int height = img.getHeight();
-        int srcCenterX = width / 2;
-        int srcCenterY = height / 2;
+        double srcCenterX = width / 2.0;
+        double srcCenterY = height / 2.0;
         double xScale = dstWidth / (double) width;
         double yScale = dstHeight / (double) height;
         double dstCenterX = (dstWidth + xScale) / 2;
