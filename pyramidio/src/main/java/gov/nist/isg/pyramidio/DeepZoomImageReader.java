@@ -11,12 +11,11 @@
  */
 package gov.nist.isg.pyramidio;
 
-import gov.nist.isg.pyramidio.tools.ImageResizingHelper;
 import gov.nist.isg.pyramidio.tools.BufferedImageHelper;
+import gov.nist.isg.pyramidio.tools.ImageResizingHelper;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,10 +29,11 @@ import javax.imageio.stream.ImageInputStream;
 import org.apache.commons.io.FilenameUtils;
 
 /**
+ * DZI pyramid reader. Thread safe.
  *
  * @author Antoine Vandecreme
  */
-public class DeepZoomImageReader implements PartialImageReader, Closeable {
+public class DeepZoomImageReader implements PartialImageReader {
 
     private final File dziFile;
     private final File filesFolder;
@@ -43,7 +43,6 @@ public class DeepZoomImageReader implements PartialImageReader, Closeable {
     private final int width;
     private final int height;
     private final int maxLevel;
-    private final ImageReader reader;
     private final ImageTypeSpecifier rawImageType;
 
     public DeepZoomImageReader(File dziFile) throws IOException {
@@ -67,20 +66,10 @@ public class DeepZoomImageReader implements PartialImageReader, Closeable {
         if (tileExample == null) {
             tileExample = getFilesOfLevel(0).get(0);
         }
-        ImageInputStream iis = ImageIO.createImageInputStream(tileExample);
-        if (iis == null) {
-            throw new IOException("No compatible image reader found.");
-        }
-        try {
-            Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
-            if (!readers.hasNext()) {
-                throw new IOException("No compatible image reader found.");
-            }
-            this.reader = readers.next();
-            this.reader.setInput(iis);
-            this.rawImageType = this.reader.getRawImageType(0);
-        } finally {
-            iis.close();
+        try (ImageInputStream iis = ImageIO.createImageInputStream(tileExample)) {
+            ImageReader reader = getImageReader(iis);
+            reader.setInput(iis);
+            this.rawImageType = reader.getRawImageType(0);
         }
 
         int maxDim = Math.max(width, height);
@@ -164,8 +153,11 @@ public class DeepZoomImageReader implements PartialImageReader, Closeable {
             return getSubImage(region, zoom);
         }
 
-        ImageTypeSpecifier its = rawImageType;
-        BufferedImage result = its.createBufferedImage(resultWidth, resultHeight);
+        BufferedImage result;
+        synchronized (this) {
+            result = rawImageType.createBufferedImage(
+                    resultWidth, resultHeight);
+        }
 
         if (!intersection.isEmpty()) {
             BufferedImage subimage = getSubImage(intersection, zoom);
@@ -308,6 +300,7 @@ public class DeepZoomImageReader implements PartialImageReader, Closeable {
         File levelFolder = new File(filesFolder, Integer.toString(level));
         File tile = new File(levelFolder, column + "_" + row + "." + format);
         try (ImageInputStream iis = ImageIO.createImageInputStream(tile)) {
+            ImageReader reader = getImageReader(iis);
             reader.setInput(iis);
             ImageReadParam param = reader.getDefaultReadParam();
             param.setSourceRegion(region);
@@ -349,8 +342,12 @@ public class DeepZoomImageReader implements PartialImageReader, Closeable {
         return result;
     }
 
-    @Override
-    public void close() throws IOException {
-        reader.dispose();
+    private static ImageReader getImageReader(ImageInputStream iis)
+            throws IOException {
+        Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+        if (!readers.hasNext()) {
+            throw new IOException("No compatible image reader found.");
+        }
+        return readers.next();
     }
 }
