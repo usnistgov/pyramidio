@@ -18,5 +18,10 @@ So, to create a new release:
 ```
 mvn release:prepare -Dresume=false
 git push --follow-tags
+jarsigner pyramidio-cli/target/pyramidio-cli-<version>.jar pyramidio -tsa http://tsa.startssl.com/rfc3161
 ```
-Travis will then take care of uploading the artifacts to the github release page.
+The last command expects the existence of a pyramidio alias in the keystore.
+See http://introcs.cs.princeton.edu/java/85application/jar/sign.html for details on how to create one.
+
+
+Once signed, the jar should be uploaded on the GitHub release page.
