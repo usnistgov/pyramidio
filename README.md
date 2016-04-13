@@ -1,4 +1,4 @@
-# PyramidIO: image pyramid reader/writer tool [![Build Status](https://travis-ci.org/NIST-ISG/pyramidio.svg?branch=master)](https://travis-ci.org/NIST-ISG/pyramidio)
+# PyramidIO: image pyramid reader/writer tool
 
 ## CLI usage
 
