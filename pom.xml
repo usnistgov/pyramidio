@@ -32,6 +32,7 @@
         <module>generic-archiver</module>
         <module>tar-archiver</module>
         <module>hdfs-archiver</module>
+        <module>s3-archiver</module>
         <module>pyramidio</module>
         <module>pyramidio-cli</module>
     </modules>

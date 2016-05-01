@@ -33,7 +33,7 @@ public class TarArchiver implements FilesArchiver {
         this.tarOutput = tarOutput;
     }
 
-    public TarArchiver(File tarFile) throws FileNotFoundException {
+    public TarArchiver(File tarFile) throws FileNotFoundException, IOException {
         this(new TarArchiveOutputStream(new FileOutputStream(tarFile)));
     }
 

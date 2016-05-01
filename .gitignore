@@ -1,10 +1,31 @@
-/target/
-/generic-archiver/target/
-/tar-archiver/target/
-/hdfs-archiver/target/
-/pyramidio/target/
-/pyramidio-cli/target/
-.directory
-**/nbactions.xml
-**/pom.xml.releaseBackup
-release.properties
+tmp/
+logs/
+.log
+#java specific
+*.class
+*.versionsBackup
+ 
+#netbeans ignore personal stuff
+nbproject/private/
+
+# Eclipse
+.classpath
+.project
+.settings/
+.metadata
+.tern-project
+
+# Mac
+.DS_Store
+
+# Maven
+log/
+target/
+dependency-reduced-pom.xml
+/bin/
+
+#######################
+# IntelliJ
+#######################
+.idea
+*.iml

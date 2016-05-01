@@ -6,7 +6,18 @@ The CLI allows to build a DZI pyramid from an image.
 To start the CLI, one should use `pyramidio-cli-[version].jar` like this:
 
 ```
-java -jar pyramidio-cli-[version].jar -i my-image.jpg -o my-output-folder
+java -jar pyramidio-cli-[version].jar -i my-image.jpg -o (my-output-folder || scheme:///path/file[.tar, .seq]
+```
+
+```
+Examples:
+* java -jar pyramidio-cli-[version].jar -i my-image.jpg -o outputfolder
+* java -jar pyramidio-cli-[version].jar -i my-image.jpg -o file:///tmp/outputfolder.tar
+* java -jar pyramidio-cli-[version].jar -i my-image.jpg -o s3://my-image-bucket/outputfolder
+* java -jar pyramidio-cli-[version].jar -i my-image.jpg -o hdfs://localhost:9000/outputfolder
+* java -jar pyramidio-cli-[version].jar -i my-image.jpg -o hdfs://localhost:9000/outputfolder.tar
+* java -jar pyramidio-cli-[version].jar -i my-image.jpg -o hdfs://localhost:9000/outputfolder.seq
+
 ```
 
 To get the list of all the options, one can type:
@@ -45,6 +56,7 @@ Currently the available `FilesArchiver`s are:
 * `SequenceFileArchiver`: save files in a Hadoop sequence file.
 * `HdfsArchiver`: save files on a HDFS filesystem.
 * `TarOnHdfsArchiver`: save files in a tar file created on a HDFS filesystem.
+* `S3Archiver`: save files to a folder on a S3 bucket.
 
 As for the `PartialImageReader`s:
 * `BufferedImageReader`: read an image from the disk and store it in RAM.

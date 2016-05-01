@@ -60,6 +60,7 @@ public class ScalablePyramidBuilder {
         this.overlap = overlap;
         this.tileFormat = tileFormat;
         this.descriptorExt = descriptorExt;
+        ImageIO.setUseCache(false);
     }
 
     /**
