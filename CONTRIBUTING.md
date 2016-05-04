@@ -12,7 +12,7 @@ It should be as simple as `mvn install`
 
 ## How to release
 
-The release processed is automated with the maven release plugin.
+The release process is automated with the maven release plugin.
 However, we do not use maven to publish.
 So, to create a new release:
 ```

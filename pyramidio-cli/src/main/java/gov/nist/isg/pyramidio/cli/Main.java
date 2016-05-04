@@ -11,9 +11,7 @@
  */
 package gov.nist.isg.pyramidio.cli;
 
-import gov.nist.isg.archiver.DirectoryArchiver;
 import gov.nist.isg.archiver.FilesArchiver;
-import gov.nist.isg.archiver.TarArchiver;
 import gov.nist.isg.pyramidio.BufferedImageReader;
 import gov.nist.isg.pyramidio.ScalablePyramidBuilder;
 import java.io.File;
@@ -62,13 +60,9 @@ public class Main {
         options.addOption(tileFormatOption);
 
         Option parallelismOption = new Option("p", "parallelism", true,
-                "Number of threads to use (default 1).");
+                "Number of threads to use (default to number of cpu cores).");
         parallelismOption.setType(PatternOptionBuilder.NUMBER_VALUE);
         options.addOption(parallelismOption);
-
-        Option tarOption = new Option("tar",
-                "If specified, the pyramid is generated in a tar file.");
-        options.addOption(tarOption);
 
         Option helpOption = new Option("h", "help", false,
                 "Display this help message and exit.");
@@ -88,8 +82,7 @@ public class Main {
             String inputFileBaseName = FilenameUtils.getBaseName(
                     inputFile.getName());
 
-            File outputFolder = new File(
-                    commandLine.getOptionValue(outputOption.getOpt()));
+            String outputFolder = commandLine.getOptionValue(outputOption.getOpt());
 
             Number tileSizeNumber = (Number) commandLine.getParsedOptionValue(
                     tileSizeOption.getOpt());
@@ -110,36 +103,8 @@ public class Main {
             Number parallelismNumber = (Number) commandLine.getParsedOptionValue(
                     parallelismOption.getOpt());
             int parallelism = parallelismNumber == null
-                    ? 1 : parallelismNumber.intValue();
-
-            boolean tar = commandLine.hasOption(tarOption.getOpt());
-            if (tar) {
-                if (outputFolder.exists()) {
-                    System.err.println("The output file " + outputFolder
-                            + " already exists.");
-                    return;
-                }
-            } else {
-                if (!outputFolder.exists()) {
-                    System.err.println("The output folder " + outputFolder
-                            + " does not exist.");
-                    return;
-                }
-                File outputFile = new File(outputFolder,
-                        inputFileBaseName + ".dzi");
-                if (outputFile.exists()) {
-                    System.err.println("The output file " + outputFile
-                            + " already exists.");
-                    return;
-                }
-                File tilesFolder = new File(outputFolder,
-                        inputFileBaseName + "_files");
-                if (tilesFolder.exists()) {
-                    System.err.println("The tiles folder " + tilesFolder
-                            + " already exists.");
-                    return;
-                }
-            }
+                    ? Runtime.getRuntime().availableProcessors()
+                    : parallelismNumber.intValue();
 
             ScalablePyramidBuilder spb = new ScalablePyramidBuilder(
                     tileSize, tileOverlap, tileFormat, "dzi");
@@ -147,9 +112,8 @@ public class Main {
             try {
                 long start = System.currentTimeMillis();
 
-                try (FilesArchiver archiver = tar
-                        ? new TarArchiver(outputFolder)
-                        : new DirectoryArchiver(outputFolder)) {
+                try (FilesArchiver archiver = FilesArchiverFactory
+                        .createFromURI(outputFolder)) {
                     spb.buildPyramid(
                             new BufferedImageReader(inputFile),
                             inputFileBaseName,

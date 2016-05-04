@@ -12,7 +12,6 @@
 package gov.nist.isg.archiver;
 
 import java.io.IOException;
-
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -30,6 +29,10 @@ public class TarOnHdfsArchiver extends TarArchiver {
         FileSystem fs = filePath.getFileSystem(conf);
         fs.setWriteChecksum(writeCheckSum);
         return fs;
+    }
+
+    public TarOnHdfsArchiver(String filePath) throws IOException {
+        this(new Path(filePath), new Configuration());
     }
 
     public TarOnHdfsArchiver(Path filePath, Configuration conf)

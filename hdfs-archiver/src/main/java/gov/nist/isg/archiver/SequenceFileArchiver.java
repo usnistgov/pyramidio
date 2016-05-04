@@ -12,18 +12,16 @@
 package gov.nist.isg.archiver;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-
+import java.io.OutputStream;
+import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.OutputStream;
-import org.apache.commons.io.IOUtils;
 
 /**
  *
@@ -32,6 +30,10 @@ import org.apache.commons.io.IOUtils;
 public class SequenceFileArchiver implements FilesArchiver {
 
     private final SequenceFile.Writer writer;
+
+    public SequenceFileArchiver(String filePath) throws IOException {
+        this(new Path(filePath), new Configuration());
+    }
 
     public SequenceFileArchiver(Path filePath, Configuration conf)
             throws IOException {

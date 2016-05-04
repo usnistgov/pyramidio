@@ -7,11 +7,11 @@
     <packaging>pom</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Parent project of pyramidio, a Java tool to read and write image pyramids.</description>
-    <url>https://github.com/NIST-ISG/pyramidio</url>
+    <url>https://github.com/usnistgov/pyramidio</url>
     <licenses>
         <license>
             <name>Public Domain</name>
-            <url>https://raw.githubusercontent.com/NIST-ISG/pyramidio/master/LICENSE</url>
+            <url>https://raw.githubusercontent.com/usnistgov/pyramidio/master/LICENSE</url>
         </license>
     </licenses>
     <developers>
@@ -23,15 +23,16 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git@github.com:NIST-ISG/pyramidio.git</connection>
-        <developerConnection>scm:git:git@github.com:NIST-ISG/pyramidio.git</developerConnection>
-        <url>git@github.com:NIST-ISG/pyramidio.git</url>
-      <tag>HEAD</tag>
-  </scm>
+        <connection>scm:git:git@github.com:usnistgov/pyramidio.git</connection>
+        <developerConnection>scm:git:git@github.com:usnistgov/pyramidio.git</developerConnection>
+        <url>git@github.com:usnistgov/pyramidio.git</url>
+        <tag>HEAD</tag>
+    </scm>
     <modules>
         <module>generic-archiver</module>
         <module>tar-archiver</module>
         <module>hdfs-archiver</module>
+        <module>s3-archiver</module>
         <module>pyramidio</module>
         <module>pyramidio-cli</module>
     </modules>
