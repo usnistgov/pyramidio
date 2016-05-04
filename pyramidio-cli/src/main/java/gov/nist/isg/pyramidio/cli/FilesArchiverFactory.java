@@ -11,25 +11,19 @@
  */
 package gov.nist.isg.pyramidio.cli;
 
+import gov.nist.isg.archiver.DirectoryArchiver;
+import gov.nist.isg.archiver.FilesArchiver;
+import gov.nist.isg.archiver.HdfsArchiver;
+import gov.nist.isg.archiver.S3Archiver;
+import gov.nist.isg.archiver.SequenceFileArchiver;
+import gov.nist.isg.archiver.TarArchiver;
+import gov.nist.isg.archiver.TarOnHdfsArchiver;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
-import org.apache.commons.io.FilenameUtils;
-
-import gov.nist.isg.archiver.DirectoryArchiver;
-import gov.nist.isg.archiver.FilesArchiver;
-import gov.nist.isg.archiver.TarArchiver;
-import gov.nist.isg.archiver.HdfsArchiver;
-import gov.nist.isg.archiver.TarOnHdfsArchiver;
-import gov.nist.isg.archiver.SequenceFileArchiver;
-import gov.nist.isg.archiver.S3Archiver;
-
 import java.util.logging.Logger;
+import org.apache.commons.io.FilenameUtils;
 
 public class FilesArchiverFactory {
 
@@ -45,78 +39,60 @@ public class FilesArchiverFactory {
     private static final String TAR_EXTENSION = "tar";
     private static final String SEQ_EXTENSION = "seq";
 
-    public static FilesArchiver makeFilesArchiver(String outputFolder) throws Exception {
-        FilesArchiver archiver = null;
-
+    public static FilesArchiver createFromURI(String uri)
+            throws IOException {
         try {
-            URI outputURI = new URI(outputFolder);
-            logger.info("Got scheme " + outputURI.getScheme() + " for folder " + outputFolder);
+            URI outputURI = new URI(uri);
+            String scheme = outputURI.getScheme();
+            logger.info("Got scheme " + scheme + " for URI " + uri);
 
-            if (outputURI.getScheme() == null ||
-                outputURI.getScheme().equalsIgnoreCase(FILE_SCHEME) ||
-                outputURI.getScheme().equalsIgnoreCase(EMPTY_STRING)) {
-                archiver = makeDirectoryArchiver(outputFolder, outputURI);
+            if (scheme == null || scheme.equalsIgnoreCase(EMPTY_STRING)) {
+                return makeDirectoryArchiver(new File(uri));
             }
-            else if (outputURI.getScheme().equalsIgnoreCase(HDFS_SCHEME)) {
-                archiver = makeHdfsArchiver(outputFolder);
+            if (scheme.equalsIgnoreCase(FILE_SCHEME)) {
+                return makeDirectoryArchiver(new File(outputURI));
             }
-            else if (outputURI.getScheme().equalsIgnoreCase(S3_SCHEME)) {
-                archiver = makeS3Archiver(outputURI, outputFolder);
+            if (scheme.equalsIgnoreCase(HDFS_SCHEME)) {
+                return makeHdfsArchiver(uri);
             }
-            else {
-                throw new IllegalStateException("The URI is not one of s3/file/hdfs scheme " + outputFolder);
+            if (scheme.equalsIgnoreCase(S3_SCHEME)) {
+                return makeS3Archiver(outputURI);
             }
+            throw new IllegalArgumentException("Unsupported scheme " + scheme);
         } catch (URISyntaxException e) {
-            throw new IllegalStateException("Unable to parse the URI for: " + outputFolder);
+            throw new IllegalArgumentException(
+                    "Unable to parse the URI " + uri, e);
         }
-        return archiver;
     }
 
-    private static FilesArchiver makeDirectoryArchiver(String outputFolder, URI outputURI) throws Exception {
-        File outputFile = null;
-        if (outputURI.getScheme() == null ||
-                outputURI.getScheme().equalsIgnoreCase(EMPTY_STRING)) { 
-            outputFile = new File(outputFolder);
-        }
-        else {
-            outputFile = new File(outputURI);
-        }
-
-        String extension = FilenameUtils.getExtension(outputFolder);
-        FilesArchiver archiver = null;
-        logger.info("Making directory archiver for " + outputFolder + " uri: " + outputURI + " extension: '" + extension + "'");
-        if (extension.contains(TAR_EXTENSION)) {
+    private static FilesArchiver makeDirectoryArchiver(File outputFile)
+            throws IOException {
+        String extension = FilenameUtils.getExtension(outputFile.getName());
+        if (extension.equalsIgnoreCase(TAR_EXTENSION)) {
             if (outputFile.exists()) {
-                throw new IOException("The path '" + outputFile + "' already exists.");
+                throw new IOException("The path '" + outputFile
+                        + "' already exists.");
             }
-            archiver =  new TarArchiver(outputFile);
+            logger.info("Making tar archiver for " + outputFile);
+            return new TarArchiver(outputFile);
         }
-        else {
-            archiver = new DirectoryArchiver(outputFile);
-        }
-        return archiver;
+        logger.info("Making directory archiver for " + outputFile);
+        return new DirectoryArchiver(outputFile);
     }
 
-    private static FilesArchiver makeHdfsArchiver(String outputFolder) throws Exception {
+    private static FilesArchiver makeHdfsArchiver(String outputFolder)
+            throws IOException {
         String extension = FilenameUtils.getExtension(outputFolder);
-        Configuration conf = new Configuration();
-        FilesArchiver archiver = null;
-        Path path = new Path(outputFolder);
-        if (extension.contains(TAR_EXTENSION)) {
-            archiver = new TarOnHdfsArchiver(path, conf);
+        if (extension.equalsIgnoreCase(TAR_EXTENSION)) {
+            return new TarOnHdfsArchiver(outputFolder);
         }
-        else if (extension.contains(SEQ_EXTENSION)) {
-            archiver = new SequenceFileArchiver(path, conf);
+        if (extension.equalsIgnoreCase(SEQ_EXTENSION)) {
+            return new SequenceFileArchiver(outputFolder);
         }
-        else {
-            archiver = new HdfsArchiver(path, conf);
-        }
-        return archiver;
+        return new HdfsArchiver(outputFolder);
     }
 
-    private static FilesArchiver makeS3Archiver(URI outputURI, String outputFolder) throws Exception {
-            return new S3Archiver(outputURI);
-        
+    private static FilesArchiver makeS3Archiver(URI outputURI) {
+        return new S3Archiver(outputURI);
     }
 }
-

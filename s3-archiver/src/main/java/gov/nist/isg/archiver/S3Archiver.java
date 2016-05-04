@@ -11,22 +11,15 @@
  */
 package gov.nist.isg.archiver;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.net.URI;
-
-
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectResult;
 
 /**
  *
@@ -37,13 +30,14 @@ public class S3Archiver implements FilesArchiver {
     private final String bucket;
     private final String prefix;
 
-    public S3Archiver(URI outputURI) throws Exception {
+    public S3Archiver(URI outputURI) {
         bucket = outputURI.getHost();
         prefix = outputURI.getPath().substring(1);
         AmazonS3Client client = new AmazonS3Client();
         ObjectListing listing = client.listObjects(bucket, prefix);
         if (!listing.getObjectSummaries().isEmpty()) {
-            throw new IllegalStateException("The bucket path exists: " + bucket + "/" + prefix);
+            throw new IllegalStateException(
+                    "The bucket path exists: " + bucket + "/" + prefix);
         }
     }
 
@@ -56,7 +50,8 @@ public class S3Archiver implements FilesArchiver {
         AmazonS3Client client = new AmazonS3Client();
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(out.size());
-        client.putObject(bucket, s3key, new ByteArrayInputStream(out.toByteArray()), metadata);
+        client.putObject(bucket, s3key, new ByteArrayInputStream(
+                out.toByteArray()), metadata);
         return result;
     }
 
@@ -76,6 +71,6 @@ public class S3Archiver implements FilesArchiver {
     }
 
     @Override
-    public synchronized void close() throws IOException {
+    public void close() throws IOException {
     }
 }

@@ -11,73 +11,90 @@
  */
 package gov.nist.isg.pyramidio.cli;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.net.URI;
-
 import gov.nist.isg.archiver.DirectoryArchiver;
 import gov.nist.isg.archiver.FilesArchiver;
-import gov.nist.isg.archiver.TarArchiver;
 import gov.nist.isg.archiver.HdfsArchiver;
+import gov.nist.isg.archiver.S3Archiver;
+import gov.nist.isg.archiver.TarArchiver;
 import gov.nist.isg.archiver.TarOnHdfsArchiver;
-
-import java.util.logging.Logger;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import static org.junit.Assert.*;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class FilesArchiverFactoryTest {
-    private static final Logger logger = Logger.getLogger(
-            FilesArchiverFactoryTest.class.getName());
 
     @Test
-    public void testNoScheme() throws Exception {
+    public void testNoScheme() throws IOException {
         String filePath = "testfolder";
         File file = new File(filePath);
         file.delete();
-        FilesArchiver archiver = FilesArchiverFactory.makeFilesArchiver(filePath);
-        assertEquals(archiver.getClass(), DirectoryArchiver.class);
+        FilesArchiver archiver = FilesArchiverFactory.createFromURI(filePath);
+        assertEquals("No scheme should create a DirectoryArchiver",
+                archiver.getClass(), DirectoryArchiver.class);
         file.delete();
     }
 
     @Test
-    public void testNoTarScheme() throws Exception {
+    public void testNoTarScheme() throws IOException {
         String tarFilePath = "testfolder.tar";
         File tarFile = new File(tarFilePath);
         tarFile.delete();
-        FilesArchiver archiver = FilesArchiverFactory.makeFilesArchiver(tarFilePath);
-        assertEquals(archiver.getClass(), TarArchiver.class);
+        FilesArchiver archiver = FilesArchiverFactory.createFromURI(
+                tarFilePath);
+        assertEquals("No scheme with tar extension should create a TarArchiver",
+                archiver.getClass(), TarArchiver.class);
         tarFile.delete();
     }
 
     @Test
-    public void testFileScheme() throws Exception {
-        FilesArchiver archiver = FilesArchiverFactory.makeFilesArchiver("file:///tmp/testfolder");
-        assertEquals(archiver.getClass().toString() , DirectoryArchiver.class.toString());
-        assertEquals(archiver.getClass(), DirectoryArchiver.class);
+    public void testFileScheme() throws IOException {
+        FilesArchiver archiver = FilesArchiverFactory.createFromURI(
+                "file:///tmp/testfolder");
+        assertEquals("file:// scheme should create a DirectoryArchiver",
+                archiver.getClass(), DirectoryArchiver.class);
     }
 
     @Test
-    public void testFileTarScheme() throws Exception {
+    public void testFileTarScheme() throws IOException, URISyntaxException {
         String tarFilePath = "file:///tmp/testfolder.tar";
         File tarFile = new File(new URI(tarFilePath));
-        boolean deleted = tarFile.delete();
-        FilesArchiver archiver = FilesArchiverFactory.makeFilesArchiver(tarFilePath);
-        assertEquals(archiver.getClass(), TarArchiver.class);
+        tarFile.delete();
+        FilesArchiver archiver = FilesArchiverFactory.createFromURI(
+                tarFilePath);
+        assertEquals("file:// scheme with tar extension should create a "
+                + "TarArchiver", archiver.getClass(), TarArchiver.class);
         tarFile.delete();
     }
 
     @Test
     @Ignore
-    public void testHdfsScheme() throws Exception {
-        FilesArchiver archiver = FilesArchiverFactory.makeFilesArchiver("hdfs://localhost:9000/testfolder");
-        assertEquals(archiver.getClass(), HdfsArchiver.class);
+    public void testHdfsScheme() throws IOException {
+        FilesArchiver archiver = FilesArchiverFactory.createFromURI(
+                "hdfs://localhost:9000/testfolder");
+        assertEquals("hdfs:// scheme should create a HdfsArchiver",
+                archiver.getClass(), HdfsArchiver.class);
     }
 
     @Test
     @Ignore
-    public void testHdfsTarScheme() throws Exception {
-        FilesArchiver archiver = FilesArchiverFactory.makeFilesArchiver("hdfs://localhost:9000/testfolder.tar");
-        assertEquals(archiver.getClass(), TarOnHdfsArchiver.class);
+    public void testHdfsTarScheme() throws IOException {
+        FilesArchiver archiver = FilesArchiverFactory.createFromURI(
+                "hdfs://localhost:9000/testfolder.tar");
+        assertEquals("hdfs:// scheme with tar extension should create a "
+                + "TarOnHdfsArchiver",
+                archiver.getClass(), TarOnHdfsArchiver.class);
+    }
+
+    @Test
+    @Ignore
+    public void testS3Scheme() throws IOException {
+        FilesArchiver archiver = FilesArchiverFactory.createFromURI(
+                "s3://bucket/file");
+        assertEquals("s3:// scheme should create a S3Archiver",
+                archiver.getClass(), S3Archiver.class);
     }
 }

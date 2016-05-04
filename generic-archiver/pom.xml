@@ -8,7 +8,7 @@
     </parent>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Generic library to write archives folders.</description>
-    <url>https://github.com/NIST-ISG/pyramidio</url>
+    <url>https://github.com/usnistgov/pyramidio</url>
     <artifactId>generic-archiver</artifactId>
     <packaging>jar</packaging>
     <properties>

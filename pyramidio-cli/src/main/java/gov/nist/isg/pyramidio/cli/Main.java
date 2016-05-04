@@ -11,9 +11,7 @@
  */
 package gov.nist.isg.pyramidio.cli;
 
-import gov.nist.isg.archiver.DirectoryArchiver;
 import gov.nist.isg.archiver.FilesArchiver;
-import gov.nist.isg.archiver.TarArchiver;
 import gov.nist.isg.pyramidio.BufferedImageReader;
 import gov.nist.isg.pyramidio.ScalablePyramidBuilder;
 import java.io.File;
@@ -105,7 +103,8 @@ public class Main {
             Number parallelismNumber = (Number) commandLine.getParsedOptionValue(
                     parallelismOption.getOpt());
             int parallelism = parallelismNumber == null
-                    ? Runtime.getRuntime().availableProcessors() : parallelismNumber.intValue();
+                    ? Runtime.getRuntime().availableProcessors()
+                    : parallelismNumber.intValue();
 
             ScalablePyramidBuilder spb = new ScalablePyramidBuilder(
                     tileSize, tileOverlap, tileFormat, "dzi");
@@ -113,7 +112,8 @@ public class Main {
             try {
                 long start = System.currentTimeMillis();
 
-                try (FilesArchiver archiver = FilesArchiverFactory.makeFilesArchiver(outputFolder)) {
+                try (FilesArchiver archiver = FilesArchiverFactory
+                        .createFromURI(outputFolder)) {
                     spb.buildPyramid(
                             new BufferedImageReader(inputFile),
                             inputFileBaseName,

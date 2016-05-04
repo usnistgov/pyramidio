@@ -8,7 +8,7 @@
     </parent>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Library to read and write image pyramids.</description>
-    <url>https://github.com/NIST-ISG/pyramidio</url>
+    <url>https://github.com/usnistgov/pyramidio</url>
     <artifactId>pyramidio</artifactId>
     <packaging>jar</packaging>
     <dependencies>

@@ -1,12 +1,15 @@
 tmp/
 logs/
 .log
-#java specific
+.directory
+
+# Java specific
 *.class
 *.versionsBackup
- 
-#netbeans ignore personal stuff
+
+# Netbeans
 nbproject/private/
+**/nbactions.xml
 
 # Eclipse
 .classpath
@@ -23,9 +26,9 @@ log/
 target/
 dependency-reduced-pom.xml
 /bin/
+**/pom.xml.releaseBackup
+release.properties
 
-#######################
 # IntelliJ
-#######################
 .idea
 *.iml

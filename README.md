@@ -6,17 +6,17 @@ The CLI allows to build a DZI pyramid from an image.
 To start the CLI, one should use `pyramidio-cli-[version].jar` like this:
 
 ```
-java -jar pyramidio-cli-[version].jar -i my-image.jpg -o (my-output-folder || scheme:///path/file[.tar, .seq]
+java -jar pyramidio-cli-[version].jar -i my-image.jpg -o (my-output-folder || scheme:///path/file[.tar, .seq])
 ```
 
-```
 Examples:
-* java -jar pyramidio-cli-[version].jar -i my-image.jpg -o outputfolder
-* java -jar pyramidio-cli-[version].jar -i my-image.jpg -o file:///tmp/outputfolder.tar
-* java -jar pyramidio-cli-[version].jar -i my-image.jpg -o s3://my-image-bucket/outputfolder
-* java -jar pyramidio-cli-[version].jar -i my-image.jpg -o hdfs://localhost:9000/outputfolder
-* java -jar pyramidio-cli-[version].jar -i my-image.jpg -o hdfs://localhost:9000/outputfolder.tar
-* java -jar pyramidio-cli-[version].jar -i my-image.jpg -o hdfs://localhost:9000/outputfolder.seq
+```
+java -jar pyramidio-cli-[version].jar -i my-image.jpg -o outputfolder
+java -jar pyramidio-cli-[version].jar -i my-image.jpg -o file:///tmp/outputfolder.tar
+java -jar pyramidio-cli-[version].jar -i my-image.jpg -o s3://my-image-bucket/outputfolder
+java -jar pyramidio-cli-[version].jar -i my-image.jpg -o hdfs://localhost:9000/outputfolder
+java -jar pyramidio-cli-[version].jar -i my-image.jpg -o hdfs://localhost:9000/outputfolder.tar
+java -jar pyramidio-cli-[version].jar -i my-image.jpg -o hdfs://localhost:9000/outputfolder.seq
 
 ```
 

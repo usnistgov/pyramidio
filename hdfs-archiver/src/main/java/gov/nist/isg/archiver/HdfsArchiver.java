@@ -11,17 +11,15 @@
  */
 package gov.nist.isg.archiver;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-
+import java.io.OutputStream;
+import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.OutputStream;
-import org.apache.commons.io.IOUtils;
 
 /**
  *
@@ -31,6 +29,10 @@ public class HdfsArchiver implements FilesArchiver {
 
     private final FileSystem fs;
     private final Path directory;
+
+    public HdfsArchiver(String directory) throws IOException {
+        this(new Path(directory), new Configuration());
+    }
 
     public HdfsArchiver(Path directory, Configuration conf)
             throws IOException {
