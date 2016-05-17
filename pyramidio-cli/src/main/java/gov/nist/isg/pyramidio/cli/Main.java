@@ -13,8 +13,9 @@ package gov.nist.isg.pyramidio.cli;
 
 import gov.nist.isg.archiver.FilesArchiver;
 import gov.nist.isg.pyramidio.BufferedImageReader;
+import gov.nist.isg.pyramidio.DirectImageReader;
+import gov.nist.isg.pyramidio.PartialImageReader;
 import gov.nist.isg.pyramidio.ScalablePyramidBuilder;
-import java.io.File;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -24,6 +25,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PatternOptionBuilder;
 import org.apache.commons.io.FilenameUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  *
@@ -63,6 +67,11 @@ public class Main {
                 "Number of threads to use (default to number of cpu cores).");
         parallelismOption.setType(PatternOptionBuilder.NUMBER_VALUE);
         options.addOption(parallelismOption);
+
+        Option imageReader = new Option("ir", "imageReader", true,
+                "Type of an image reader, either BUFFERED or DIRECT (default to BUFFERED image reader).");
+        imageReader.setType(PatternOptionBuilder.STRING_VALUE);
+        options.addOption(imageReader);
 
         Option helpOption = new Option("h", "help", false,
                 "Display this help message and exit.");
@@ -106,6 +115,11 @@ public class Main {
                     ? Runtime.getRuntime().availableProcessors()
                     : parallelismNumber.intValue();
 
+            String imageReaderTypeStr =
+                (String) commandLine.getParsedOptionValue(imageReader.getOpt());
+            ImageReaderType imageReaderType = imageReaderTypeStr == null? ImageReaderType.BUFFERED:
+                ImageReaderType.valueOf(imageReaderTypeStr.toUpperCase());
+
             ScalablePyramidBuilder spb = new ScalablePyramidBuilder(
                     tileSize, tileOverlap, tileFormat, "dzi");
 
@@ -115,7 +129,7 @@ public class Main {
                 try (FilesArchiver archiver = FilesArchiverFactory
                         .createFromURI(outputFolder)) {
                     spb.buildPyramid(
-                            new BufferedImageReader(inputFile),
+                            getReader(imageReaderType, inputFile),
                             inputFileBaseName,
                             archiver,
                             parallelism);
@@ -137,4 +151,21 @@ public class Main {
         new HelpFormatter().printHelp("pyramidio", options);
     }
 
+    private static PartialImageReader getReader(ImageReaderType imageReaderType, File imageFile)
+        throws IOException {
+
+        if(imageReaderType == ImageReaderType.BUFFERED) {
+            return new BufferedImageReader(imageFile);
+        }
+        else if(imageReaderType == ImageReaderType.DIRECT) {
+            return new DirectImageReader(imageFile);
+        }
+        else {
+            throw new IOException("Unsupported image reader type: " + imageReaderType);
+        }
+    }
+
+    private enum ImageReaderType {
+        BUFFERED, DIRECT
+    }
 }
