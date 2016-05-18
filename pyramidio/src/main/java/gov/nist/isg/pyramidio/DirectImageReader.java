@@ -11,10 +11,6 @@
  */
 package gov.nist.isg.pyramidio;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -22,6 +18,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 
 /**
  * @author plitvak
@@ -39,7 +39,7 @@ public class DirectImageReader implements PartialImageReader {
 
     @Override
     public BufferedImage read() throws IOException {
-        throw new RuntimeException("Operation is not supported by this reader");
+        return read(new Rectangle(0, 0, dimension.width, dimension.height));
     }
 
     @Override
@@ -62,16 +62,19 @@ public class DirectImageReader implements PartialImageReader {
         return executeWithImageReader(new Function<Dimension>() {
             @Override
             public Dimension apply(ImageReader imageReader) throws IOException {
-                return new Dimension(imageReader.getWidth(0), imageReader.getHeight(0));
+                return new Dimension(
+                        imageReader.getWidth(0), imageReader.getHeight(0));
             }
         });
     }
 
-    private BufferedImage readRegion(final Rectangle rectangle) throws IOException {
+    private BufferedImage readRegion(final Rectangle rectangle)
+            throws IOException {
 
         return executeWithImageReader(new Function<BufferedImage>() {
             @Override
-            public BufferedImage apply(ImageReader imageReader) throws IOException {
+            public BufferedImage apply(ImageReader imageReader)
+                    throws IOException {
                 ImageReadParam param = imageReader.getDefaultReadParam();
                 param.setSourceRegion(rectangle);
 
@@ -82,8 +85,8 @@ public class DirectImageReader implements PartialImageReader {
 
     private <T> T executeWithImageReader(Function<T> f) throws IOException {
 
-        try (ImageInputStream iis = ImageIO
-            .createImageInputStream(new FileInputStream(imageFile).getChannel())) {
+        try (ImageInputStream iis = ImageIO.createImageInputStream(
+                new FileInputStream(imageFile).getChannel())) {
 
             Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
             if (readers.hasNext()) {
@@ -94,8 +97,7 @@ public class DirectImageReader implements PartialImageReader {
                 } finally {
                     reader.dispose();
                 }
-            }
-            else {
+            } else {
                 throw new IOException("No codec found for image " + imageFile);
             }
         }
@@ -103,6 +105,7 @@ public class DirectImageReader implements PartialImageReader {
 
     // for compatibility with pre Java 8 source
     private interface Function<T> {
+
         T apply(ImageReader imageReader) throws IOException;
     }
 }
