@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>PyramidIO test visualization</title>
+        
+        <style>
+          #openseadragon {
+              position: absolute;
+              top: 0;
+              left: 0;
+              bottom: 0;
+              right: 0;
+          }
+        </style>
+    </head>
+    <body>
+        <div id="openseadragon"></div>
+
+        <script src='http://openseadragon.github.io/openseadragon/openseadragon.min.js'></script>
+        
+        <script>
+        
+          OpenSeadragon({
+              id:              "openseadragon",
+              prefixUrl:       "http://openseadragon.github.io/openseadragon/images/",
+              tileSources:     {
+                  "Image": {
+                      "xmlns":    "http://schemas.microsoft.com/deepzoom/2008",
+                      "Url":      "grand-canyon-landscape-overlooking_files/",
+                      "Format":   "jpg", 
+                      "Overlap":  "1", 
+                      "TileSize": "254",
+                      "Size": {
+                          "Width":  "5000",
+                          "Height": "3750"
+                      }
+                  }
+              }
+          });
+        
+        </script>
+    </body>
+</html>
