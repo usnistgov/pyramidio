@@ -12,7 +12,7 @@
 package gov.nist.isg.pyramidio.cli;
 
 import gov.nist.isg.archiver.FilesArchiver;
-import gov.nist.isg.pyramidio.BufferedImageReader;
+import gov.nist.isg.pyramidio.DirectImageReader;
 import gov.nist.isg.pyramidio.ScalablePyramidBuilder;
 import java.io.File;
 import org.apache.commons.cli.CommandLine;
@@ -64,6 +64,15 @@ public class Main {
         parallelismOption.setType(PatternOptionBuilder.NUMBER_VALUE);
         options.addOption(parallelismOption);
 
+        Option inputCacheRatioOption = new Option("icr", "inputCacheRatio", true,
+                "Ratio of the input image which can be kept in cache "
+                + "at any time. By default, the entire input image is kept "
+                + "in cache (value 1). This is the fastest but consume "
+                + "more memory. Set to 0 to disable the cache (will be slow "
+                + "especially with compressed images such as jpg and png).");
+        inputCacheRatioOption.setType(PatternOptionBuilder.NUMBER_VALUE);
+        options.addOption(inputCacheRatioOption);
+
         Option helpOption = new Option("h", "help", false,
                 "Display this help message and exit.");
         options.addOption(helpOption);
@@ -106,6 +115,13 @@ public class Main {
                     ? Runtime.getRuntime().availableProcessors()
                     : parallelismNumber.intValue();
 
+            Number inputCacheRatioNumber
+                    = (Number) commandLine.getParsedOptionValue(
+                            inputCacheRatioOption.getOpt());
+            float cachePercentage = inputCacheRatioNumber == null
+                    ? 1
+                    : inputCacheRatioNumber.floatValue();
+
             ScalablePyramidBuilder spb = new ScalablePyramidBuilder(
                     tileSize, tileOverlap, tileFormat, "dzi");
 
@@ -115,10 +131,11 @@ public class Main {
                 try (FilesArchiver archiver = FilesArchiverFactory
                         .createFromURI(outputFolder)) {
                     spb.buildPyramid(
-                            new BufferedImageReader(inputFile),
+                            new DirectImageReader(inputFile),
                             inputFileBaseName,
                             archiver,
-                            parallelism);
+                            parallelism,
+                            cachePercentage);
                 }
                 float duration = (System.currentTimeMillis() - start) / 1000F;
                 System.out.println("Pyramid built in " + duration + "s.");
@@ -136,5 +153,4 @@ public class Main {
     private static void printHelp(Options options) {
         new HelpFormatter().printHelp("pyramidio", options);
     }
-
 }

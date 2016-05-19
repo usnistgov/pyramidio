@@ -8,7 +8,7 @@ logs/
 *.versionsBackup
 
 # Netbeans
-nbproject/private/
+**/nbproject
 **/nbactions.xml
 
 # Eclipse
