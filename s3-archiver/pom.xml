@@ -4,7 +4,7 @@
     <parent>
         <groupId>gov.nist.isg</groupId>
         <artifactId>pyramidio-parent</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.1.0</version>
     </parent>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Library to read and write archives on Amazon S3.</description>
