@@ -13,15 +13,12 @@ It should be as simple as `mvn install`
 ## How to release
 
 The release process is automated with the maven release plugin.
-However, we do not use maven to publish.
-So, to create a new release:
+All release components are kept in a `release` profile, so remember to use maven with the `-P=release` option.
 ```
-mvn release:prepare -Dresume=false
+mvn -P=release release:clean release:prepare
+#Automatic push is disabled, so do it manually
 git push --follow-tags
-jarsigner pyramidio-cli/target/pyramidio-cli-<version>.jar pyramidio -tsa http://tsa.startssl.com/rfc3161
+mvn -P=release release:perform
 ```
-The last command expects the existence of a pyramidio alias in the keystore.
-See http://introcs.cs.princeton.edu/java/85application/jar/sign.html for details on how to create one.
-
-
-Once signed, the jar should be uploaded on the GitHub release page.
+The last command will release the new version on maven central.
+For convenience, the `pyramidio-cli` jar should be uploaded to the GitHub release page as well.
