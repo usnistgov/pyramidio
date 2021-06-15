@@ -63,7 +63,14 @@ class TileBuilder {
         originalWidth = imageReader.getWidth();
         originalHeight = imageReader.getHeight();
 
-        String nameWithoutExtension = FilenameUtils.getBaseName(fileName);
+        /*
+         raw fix of https://github.com/usnistgov/pyramidio/issues/13
+         1) <name>.dzi and <name>_files have to match, even if <name> happens to contain dot(s)
+         2) in particular, CLI passes a stripped filename already
+            - "inputFileBaseName" https://github.com/usnistgov/pyramidio/blob/1d5c802fa8641cfdd00cdea02f416ea350edd92b/pyramidio-cli/src/main/java/gov/nist/isg/pyramidio/cli/Main.java#L91
+            - "sbs.build(...,inputFileBaseName,...) https://github.com/usnistgov/pyramidio/blob/1d5c802fa8641cfdd00cdea02f416ea350edd92b/pyramidio-cli/src/main/java/gov/nist/isg/pyramidio/cli/Main.java#L135
+        */
+        String nameWithoutExtension = /*FilenameUtils.getBaseName(*/fileName/*)*/;
         String descriptorName = nameWithoutExtension + '.' + descriptorExt;
         DziFile dziFile = new DziFile(tileSize, overlap, tileFormat,
                 originalWidth, originalHeight);
